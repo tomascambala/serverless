@@ -42,20 +42,19 @@ export class TodosAccess {
   //   return items as TodoItem[]
   // }
 
-  // async getTodoItem(todoId: string): Promise<TodoItem> {
-  //   logger.info(`Getting todo ${todoId} from ${this.todosTable}`)
+  async getTodoItem(todoId: string): Promise<TodoItem> {
 
-  //   const result = await this.docClient.get({
-  //     TableName: this.todosTable,
-  //     Key: {
-  //       todoId
-  //     }
-  //   }).promise()
+    const result = await this.docClient.get({
+      TableName: this.todosTable,
+      Key: {
+        todoId
+      }
+    }).promise()
 
-  //   const item = result.Item
+    const item = result.Item
 
-  //   return item as TodoItem
-  // }
+    return item as TodoItem
+  }
 
   async createTodoItem(todoItem: TodoItem) {
 
@@ -85,16 +84,15 @@ export class TodosAccess {
   //   }).promise()   
   // }
 
-  // async deleteTodoItem(todoId: string) {
-  //   logger.info(`Deleting todo item ${todoId} from ${this.todosTable}`)
+  async deleteTodoItem(todoId: string) {
 
-  //   await this.docClient.delete({
-  //     TableName: this.todosTable,
-  //     Key: {
-  //       todoId
-  //     }
-  //   }).promise()    
-  // }
+    await this.docClient.delete({
+      TableName: this.todosTable,
+      Key: {
+        todoId
+      }
+    }).promise()    
+  }
 
   // async updateAttachmentUrl(todoId: string, attachmentUrl: string) {
   //   logger.info(`Updating attachment URL for todo ${todoId} in ${this.todosTable}`)

@@ -1,4 +1,3 @@
-// nothing so far
 import { CreateTodoRequest } from '../requests/CreateTodoRequest'
 import * as uuid from 'uuid'
 import { TodoItem } from '../models/TodoItem'
@@ -21,4 +20,18 @@ export async function createTodo(userId: string, createTodoRequest: CreateTodoRe
     await todosAccess.createTodoItem(newItem)
   
     return newItem
+  }
+
+  export async function deleteTodo(userId: string, todoId: string) {
+  
+    const item = await todosAccess.getTodoItem(todoId)
+  
+    if (!item)
+      throw new Error('Item is not exists')
+  
+    if (item.userId !== userId) {
+      throw new Error('User is not authorized')
+    }
+  
+    todosAccess.deleteTodoItem(todoId)
   }
