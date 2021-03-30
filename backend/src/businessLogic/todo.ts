@@ -1,5 +1,9 @@
 // nothing so far
 import { CreateTodoRequest } from '../requests/CreateTodoRequest'
+import * as uuid from 'uuid'
+import { TodoItem } from '../models/TodoItem'
+
+const todosAccess = new TodosAccess()
 
 export async function createTodo(userId: string, createTodoRequest: CreateTodoRequest): Promise<TodoItem> {
     const todoId = uuid.v4()
@@ -12,8 +16,6 @@ export async function createTodo(userId: string, createTodoRequest: CreateTodoRe
       attachmentUrl: null,
       ...createTodoRequest
     }
-  
-    logger.info(`Creating todo ${todoId} for user ${userId}`, { userId, todoId, todoItem: newItem })
   
     await todosAccess.createTodoItem(newItem)
   
