@@ -1,8 +1,10 @@
 import { CreateTodoRequest } from '../requests/CreateTodoRequest'
+import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
 import * as uuid from 'uuid'
 import { TodoItem } from '../models/TodoItem'
 import { TodosAccess } from '../dataLayer/TodoAccess'
 import { TodoS3store } from '../dataLayer/TodoS3store'
+import { TodoUpdate } from '../models/TodoUpdate'
 
 const todosAccess = new TodosAccess();
 const todoS3store = new TodoS3store()
@@ -52,7 +54,7 @@ export async function updateAttachmentUrl(userId: string, todoId: string, attach
     throw new Error('Item is not exists')
   }
   if (item.userId !== userId) {
-    throw new Error('Authorization required for updating item')
+    throw new Error('Authorization is required for updating item')
   }
 
   await todosAccess.updateAttachmentUrl(todoId, attachmentUrl)
@@ -63,4 +65,19 @@ export async function generateUploadUrl(attachmentId: string): Promise<string> {
   const uploadUrl = await todoS3store.getUploadUrl(attachmentId)
 
   return uploadUrl
+}
+
+
+export async function updateTodo(userId: string, todoId: string, updateTodoRequest: UpdateTodoRequest) {
+
+  const item = await todosAccess.getTodoItem(todoId)
+
+  if (!item) {
+    throw new Error('Item is not exists')
+  }
+  if (item.userId !== userId) {
+    throw new Error('Authorization is required for updating item')
+  }
+
+  todosAccess.updateTodoItem(todoId, updateTodoRequest as TodoUpdate)
 }

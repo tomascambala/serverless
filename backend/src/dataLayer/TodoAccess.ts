@@ -5,7 +5,7 @@ import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import * as AWSXRay from 'aws-xray-sdk'
 
 import { TodoItem } from '../models/TodoItem'
-// import { TodoUpdate } from '../models/TodoUpdate'
+import { TodoUpdate } from '../models/TodoUpdate'
 
 const XAWS = AWSXRay.captureAWS(AWS)
 
@@ -21,8 +21,6 @@ export class TodosAccess {
   //   const item = await this.getTodoItem(todoId)
   //   return !!item
   // }
-
-
 
   async getTodoItem(todoId: string): Promise<TodoItem> {
 
@@ -46,26 +44,6 @@ export class TodosAccess {
     }).promise()
   }
 
-  // async updateTodoItem(todoId: string, todoUpdate: TodoUpdate) {
-  //   logger.info(`Updating todo item ${todoId} in ${this.todosTable}`)
-
-  //   await this.docClient.update({
-  //     TableName: this.todosTable,
-  //     Key: {
-  //       todoId
-  //     },
-  //     UpdateExpression: 'set #name = :name, dueDate = :dueDate, done = :done',
-  //     ExpressionAttributeNames: {
-  //       "#name": "name"
-  //     },
-  //     ExpressionAttributeValues: {
-  //       ":name": todoUpdate.name,
-  //       ":dueDate": todoUpdate.dueDate,
-  //       ":done": todoUpdate.done
-  //     }
-  //   }).promise()   
-  // }
-
   async deleteTodoItem(todoId: string) {
 
     await this.docClient.delete({
@@ -88,6 +66,25 @@ export class TodosAccess {
         ':attachmentUrl': attachmentUrl
       }
     }).promise()
+  }
+
+   async updateTodoItem(todoId: string, todoUpdate: TodoUpdate) {
+
+    await this.docClient.update({
+      TableName: this.todosTable,
+      Key: {
+        todoId
+      },
+      UpdateExpression: 'set #name = :name, dueDate = :dueDate, done = :done',
+      ExpressionAttributeNames: {
+        "#name": "name"
+      },
+      ExpressionAttributeValues: {
+        ":name": todoUpdate.name,
+        ":dueDate": todoUpdate.dueDate,
+        ":done": todoUpdate.done
+      }
+    }).promise()   
   }
 
   async getTodoItems(userId: string): Promise<TodoItem[]> {
