@@ -6,7 +6,6 @@ import * as AWSXRay from 'aws-xray-sdk'
 
 import { TodoItem } from '../models/TodoItem'
 // import { TodoUpdate } from '../models/TodoUpdate'
-// import { createLogger } from '../utils/logger'
 
 const XAWS = AWSXRay.captureAWS(AWS)
 
@@ -15,7 +14,7 @@ export class TodosAccess {
   constructor(
     private readonly docClient: DocumentClient = new XAWS.DynamoDB.DocumentClient(),
     private readonly todosTable = process.env.TODOS_TABLE,
-    // private readonly todosByUserIndex = process.env.TODOS_BY_USER_INDEX
+    private readonly todosByUserIndex = process.env.TODOS_BY_USER_INDEX
   ) {}
 
   // async todoItemExists(todoId: string): Promise<boolean> {
@@ -23,24 +22,7 @@ export class TodosAccess {
   //   return !!item
   // }
 
-  // async getTodoItems(userId: string): Promise<TodoItem[]> {
-  //   logger.info(`Getting all todos for user ${userId} from ${this.todosTable}`)
 
-  //   const result = await this.docClient.query({
-  //     TableName: this.todosTable,
-  //     IndexName: this.todosByUserIndex,
-  //     KeyConditionExpression: 'userId = :userId',
-  //     ExpressionAttributeValues: {
-  //       ':userId': userId
-  //     }
-  //   }).promise()
-
-  //   const items = result.Items
-
-  //   logger.info(`Found ${items.length} todos for user ${userId} in ${this.todosTable}`)
-
-  //   return items as TodoItem[]
-  // }
 
   async getTodoItem(todoId: string): Promise<TodoItem> {
 
@@ -106,6 +88,22 @@ export class TodosAccess {
         ':attachmentUrl': attachmentUrl
       }
     }).promise()
+  }
+
+  async getTodoItems(userId: string): Promise<TodoItem[]> {
+
+    const result = await this.docClient.query({
+      TableName: this.todosTable,
+      IndexName: this.todosByUserIndex,
+      KeyConditionExpression: 'userId = :userId',
+      ExpressionAttributeValues: {
+        ':userId': userId
+      }
+    }).promise()
+
+    const items = result.Items
+
+    return items as TodoItem[]
   }
 
 }

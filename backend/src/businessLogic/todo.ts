@@ -38,6 +38,10 @@ export async function deleteTodo(userId: string, todoId: string) {
   todosAccess.deleteTodoItem(todoId)
 }
 
+export async function getTodos(userId: string): Promise<TodoItem[]> {
+  return await todosAccess.getTodoItems(userId)
+}
+
 export async function updateAttachmentUrl(userId: string, todoId: string, attachmentId: string) {
 
   const attachmentUrl = await todoS3store.getAttachmentUrl(attachmentId)
