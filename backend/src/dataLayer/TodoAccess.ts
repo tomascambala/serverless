@@ -94,19 +94,18 @@ export class TodosAccess {
     }).promise()    
   }
 
-  // async updateAttachmentUrl(todoId: string, attachmentUrl: string) {
-  //   logger.info(`Updating attachment URL for todo ${todoId} in ${this.todosTable}`)
+  async updateAttachmentUrl(todoId: string, attachmentUrl: string) {
 
-  //   await this.docClient.update({
-  //     TableName: this.todosTable,
-  //     Key: {
-  //       todoId
-  //     },
-  //     UpdateExpression: 'set attachmentUrl = :attachmentUrl',
-  //     ExpressionAttributeValues: {
-  //       ':attachmentUrl': attachmentUrl
-  //     }
-  //   }).promise()
-  // }
+    await this.docClient.update({
+      TableName: this.todosTable,
+      Key: {
+        todoId
+      },
+      UpdateExpression: 'set attachmentUrl = :attachmentUrl',
+      ExpressionAttributeValues: {
+        ':attachmentUrl': attachmentUrl
+      }
+    }).promise()
+  }
 
 }
