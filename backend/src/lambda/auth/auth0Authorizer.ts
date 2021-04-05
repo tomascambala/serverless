@@ -6,6 +6,7 @@ import { createLogger } from '../../utils/logger'
 import Axios from 'axios'
 import { Jwt } from '../../auth/Jwt'
 import { JwtPayload } from '../../auth/JwtPayload'
+let cachedCertificate: string
 
 const logger = createLogger('auth')
 
@@ -56,12 +57,16 @@ export const handler = async (
 
 async function verifyToken(authHeader: string): Promise<JwtPayload> {
   const token = getToken(authHeader)
-  const jwt: Jwt = decode(token, { complete: true }) as Jwt
+  // const jwt: Jwt = decode(token, { complete: true }) as Jwt
 
   // TODO: Implement token verification
   // You should implement it similarly to how it was implemented for the exercise for the lesson 5
   // You can read more about how to do this here: https://auth0.com/blog/navigating-rs256-and-jwks/
-  return undefined
+
+  const cert = await getCertificate()
+
+  return verify(token, cert, { algorithms: ['RS256'] }) as JwtPayload
+
 }
 
 function getToken(authHeader: string): string {
@@ -72,6 +77,41 @@ function getToken(authHeader: string): string {
 
   const split = authHeader.split(' ')
   const token = split[1]
-
   return token
+}
+
+function parseCertificate(cert: string): string {
+  cert = cert.match(/.{1,64}/g).join('\n')
+  cert = `-----BEGIN CERTIFICATE-----\n${cert}\n-----END CERTIFICATE-----\n`
+  return cert
+}
+
+async function getCertificate(): Promise<string> {
+  if (cachedCertificate) return cachedCertificate
+
+  const response = await Axios.get(jwksUrl)
+  const keys = response.data.keys
+
+  if (!keys || !keys.length) {
+    throw new Error('No certificate keys found')
+  }
+
+  const signingKeys = keys.filter(
+    key => key.use === 'sig'
+           && key.kty === 'RSA'
+           && key.alg === 'RS256'
+           && key.n
+           && key.e
+           && key.kid
+           && (key.x5c && key.x5c.length)
+  )
+
+  if (!signingKeys.length)
+    throw new Error('No certificate signing keys found')
+  
+  const key = signingKeys[0]
+  const pub = key.x5c[0] 
+  cachedCertificate = parseCertificate(pub)
+
+  return cachedCertificate
 }
