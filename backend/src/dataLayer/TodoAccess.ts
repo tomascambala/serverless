@@ -3,9 +3,11 @@ import 'source-map-support/register'
 import * as AWS from 'aws-sdk'
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import * as AWSXRay from 'aws-xray-sdk'
-
 import { TodoItem } from '../models/TodoItem'
 import { TodoUpdate } from '../models/TodoUpdate'
+import { createLogger } from '../utils/logger'
+
+const logger = createLogger('todosAccess')
 
 const XAWS = AWSXRay.captureAWS(AWS)
 
@@ -17,12 +19,8 @@ export class TodosAccess {
     private readonly todosByUserIndex = process.env.TODOS_BY_USER_INDEX
   ) {}
 
-  // async todoItemExists(todoId: string): Promise<boolean> {
-  //   const item = await this.getTodoItem(todoId)
-  //   return !!item
-  // }
-
   async getTodoItem(todoId: string): Promise<TodoItem> {
+    logger.info(`From ${this.todosTable} getting user todo item: ${todoId}`)
 
     const result = await this.docClient.get({
       TableName: this.todosTable,
@@ -37,6 +35,7 @@ export class TodosAccess {
   }
 
   async createTodoItem(todoItem: TodoItem) {
+    logger.info(`From ${this.todosTable} create Todo Item: ${todoItem}`)
 
     await this.docClient.put({
       TableName: this.todosTable,
@@ -55,6 +54,7 @@ export class TodosAccess {
   }
 
   async updateAttachmentUrl(todoId: string, attachmentUrl: string) {
+    logger.info(`From ${this.todosTable}update attachmentURL: ${attachmentUrl} and with ${todoId}`)
 
     await this.docClient.update({
       TableName: this.todosTable,
@@ -69,6 +69,7 @@ export class TodosAccess {
   }
 
    async updateTodoItem(todoId: string, todoUpdate: TodoUpdate) {
+    logger.info(`From ${this.todosTable}update update totoId: ${todoId} and with  todoUpdate ${todoUpdate}`)
 
     await this.docClient.update({
       TableName: this.todosTable,
@@ -88,6 +89,7 @@ export class TodosAccess {
   }
 
   async getTodoItems(userId: string): Promise<TodoItem[]> {
+    logger.info(`From ${this.todosTable} getting todo items for user ${userId}`)
 
     const result = await this.docClient.query({
       TableName: this.todosTable,
