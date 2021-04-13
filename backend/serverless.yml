@@ -14,9 +14,9 @@ provider:
   region: ${opt:region, 'us-east-1'}
 
   environment:
-    TODOS_TABLE: Todos-${self:provider.stage}
+    TODOS_TABLE: Todostable-${self:provider.stage}
     TODOS_BY_USER_INDEX: TodosByUserIndex
-    ATTACHMENTS_S3_BUCKET: cambala-todos-attachments-${self:provider.stage}
+    ATTACHMENTS_S3_BUCKET: todos-attachments-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 3000
 
   tracing:
