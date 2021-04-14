@@ -15,9 +15,9 @@ provider:
   region: ${opt:region, 'us-east-1'}
 
   environment:
-    TODOS_TABLE: Todocambala-${self:provider.stage}
+    TODOS_TABLE: Todocam-${self:provider.stage}
     TODOS_BY_USER_INDEX: TodosByUserIndex
-    ATTACHMENTS_S3_BUCKET: todocambala-attachments-${self:provider.stage}
+    ATTACHMENTS_S3_BUCKET: todocam-attachments-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 3000
 
   tracing:
@@ -116,7 +116,7 @@ functions:
           reqValidatorName: RequestBodyValidator
           documentation:
             summary: Update todo
-            description: Update
+            description: Update todo
             requestModels:
               'application/json': UpdateTodoRequest
     iamRoleStatements:
@@ -233,13 +233,13 @@ resources:
         AttributeDefinitions:
           - AttributeName: userId
             AttributeType: S
+          - AttributeName: todoId
+            AttributeType: S
           - AttributeName: createdAt
             AttributeType: S
         KeySchema:
-          - AttributeName: userId
+          - AttributeName: todoId
             KeyType: HASH
-          - AttributeName: createdAt
-            KeyType: RANGE  
         BillingMode: PAY_PER_REQUEST
         TableName: ${self:provider.environment.TODOS_TABLE}
         GlobalSecondaryIndexes:
