@@ -15,9 +15,9 @@ provider:
   region: ${opt:region, 'us-east-1'}
 
   environment:
-    TODOS_TABLE: Todocam-${self:provider.stage}
+    TODOS_TABLE: todocamba-${self:provider.stage}
     TODOS_BY_USER_INDEX: TodosByUserIndex
-    ATTACHMENTS_S3_BUCKET: todocam-attachments-${self:provider.stage}
+    ATTACHMENTS_S3_BUCKET: todocamba-attachments-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 3000
 
   tracing:
@@ -231,15 +231,17 @@ resources:
       Type: AWS::DynamoDB::Table
       Properties:
         AttributeDefinitions:
-          - AttributeName: userId
-            AttributeType: S
           - AttributeName: todoId
+            AttributeType: S
+          - AttributeName: userId
             AttributeType: S
           - AttributeName: createdAt
             AttributeType: S
         KeySchema:
-          - AttributeName: todoId
+          - AttributeName: userId
             KeyType: HASH
+          - AttributeName: todoId
+            KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
         TableName: ${self:provider.environment.TODOS_TABLE}
         GlobalSecondaryIndexes:
