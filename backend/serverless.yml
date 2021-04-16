@@ -15,9 +15,9 @@ provider:
   region: ${opt:region, 'us-east-1'}
 
   environment:
-    TODOS_TABLE: todocamba-${self:provider.stage}
+    TODOS_TABLE: tsocsmsba-${self:provider.stage}
     TODOS_BY_USER_INDEX: TodosByUserIndex
-    ATTACHMENTS_S3_BUCKET: todocamba-attachments-${self:provider.stage}
+    ATTACHMENTS_S3_BUCKET: tsodossaa-attachments-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 3000
 
   tracing:
@@ -109,7 +109,7 @@ functions:
     handler: src/lambda/http/updateTodo.handler
     events:
       - http:
-          method: patch
+          method: put
           path: todos/{todoId}
           cors: true
           auth: Auth
